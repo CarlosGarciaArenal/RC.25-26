@@ -50,6 +50,11 @@ En este último paso, queremos ver si  $X \perp _g Y \mid Z$. Para ello, buscamo
 La complejidad de quitar los nodos de $Z$ es lineal $O(n)$ donde $n$ es el numero de nodos de $Z$, ya que, simplemente hay que recorrer el conjunto y eliminar los nodos.
 El peor caso en este paso, ocurre cuando tenemos que visitar todos los nodos porque tendríamos que visitar cada nodo y cada arista. El algoritmo es recursivo pero como guardamos en un conjunto los nodos ya visitados, nos aseguramos que pasaremos solamente una vez por cada nodo. Dicho esto, la complejidad temporal sería  $O(V + E)$, siendo $V$ los nodos del grafo, y $E$, las aristas.
 
+\section{Complejidad Total}
+El algoritmo de eliminación de variables consta de llamar a cada una de las tres funciones desarrolladas anteriormente, en el orden en que se han descrito.
+
+Por lo tanto, la complejidad temporal será de $O(np+np^2+(n+m))$. Como $np^2 > np$ se cumplirá siempre, y en cualquier grafo sin ciclos el número de nodos será superior al número de aristas en al menos una unidad ($n \ge m$, con el máximo valor de m siendo $m = n - 1$), $O(np+np^2+(n+m)) = O(np^2)$ en términos de complejidad.
+
 
 
 

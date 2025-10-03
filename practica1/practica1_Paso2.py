@@ -13,16 +13,18 @@ def joinAndIgnore(G):
                 newGraph.add_edge(parents[i], parents[j])
     return newGraph
 
-G = nx.DiGraph()
-elist = [("A", "C"), ("B", "C"), ("C", "E"), ("E", "F"), ("C", "D"), ("D", "F"), ("I", "C")]
-G.add_edges_from(elist)
 
-nx.draw(G, with_labels=True, node_color="lightblue", node_size=2000, font_size=14)
-plt.show()
+if __name__ == "__main__":
+    G = nx.DiGraph()
+    elist = [("A", "C"), ("B", "C"), ("C", "E"), ("E", "F"), ("C", "D"), ("D", "F"), ("I", "C")]
+    G.add_edges_from(elist)
 
-G = joinAndIgnore(G)
-nx.draw(G, with_labels=True, node_color="lightblue", node_size=2000, font_size=14)
-plt.show()
+    nx.draw(G, with_labels=True, node_color="lightblue", node_size=2000, font_size=14)
+    plt.show()
+
+    G = joinAndIgnore(G)
+    nx.draw(G, with_labels=True, node_color="lightblue", node_size=2000, font_size=14)
+    plt.show()
 
 
 

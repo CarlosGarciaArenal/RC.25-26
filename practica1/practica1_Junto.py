@@ -34,8 +34,8 @@ def prueba(G, nodes, edges, X, Y, Z):
     print("Aristas tras quitar Z:", G.edges())
 
     # Comprobar si hay caminos entre nodos de X e Y
-    Resultado = existen_caminos(G,X,Y)
-    if Resultado:
+    resultado = existen_caminos(G,X,Y)
+    if resultado:
         print(f"Existe un camino entre {X} e {Y}")
     else:
         print(f"No existe un camino entre {X} e {Y}")             

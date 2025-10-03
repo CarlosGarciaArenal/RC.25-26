@@ -33,6 +33,13 @@ Para el desarrollo de la práctica hemos dividido el trabajo en el grupo en los 
 
 \section{Complejidad del paso 1}
 
+El paso 1 consiste en identificar aquellos nodos que sean nodos hoja, y eliminarlos. Por lo tanto, se recorren todos los nodos (\textbf{n}) y se mantiene una lista con aquellos nodos que aún deban explorarse. Al explorar un nodo, si se elimina de la lista, se vuelven a añadir sus predecesores. En caso contrario, no sucede nada. \\ \\
+Así, el peor caso será aquel en que los nodos $\in X \cup Y \cup Z$ (que no pueden ser eliminados) no tengan ningún predecesor y el primer nodo que se pueda eliminar sea el último en ser explorado. En este caso, se explorarán todos los nodos ($O(n)$), y después se irán explorando de nuevo para ir eliminándolos ($O(n)$), resultando un grafo que contenga únicamente los nodos $\in X \cup Y \cup Z$. \\ \\
+Con esto tenemos una complejidad temporal de \textbf{2n}, siendo \textbf{n} el número de nodos del grafo. Pero, en cada iteración del bucle, se obtienen los predecesores del nodo que se está explorando. El coste de esta acción es $O(p)$, siendo \textbf{p} el número máximo de predecesores de un nodo. Por lo tanto, $p \le m$. En el caso $p = m$, habrá un solo nodo con predecesores, por lo que este nodo tendrá $n - 1$ predecesores, y la complejidad será de $O(2n*m)$, pero rara vez se dará este caso. \\ \\
+Así, la complejidad de eliminar los nodos hoja es la siguiente:
+$$O(2n*p) = O(2n*p); \; p \le m$$
+donde \textbf{n} es el número de nodos del grafo y \textbf{p} es el número máximo de predecesores de un nodo.
+
 \section{Complejidad del paso 2}
 
 \section{Complejidad del paso 3}

@@ -31,7 +31,7 @@ plt.show()
 #######################################################
 ### PASO 2 ES HACER QUE EL GRAFO SEA NO DIRIGIDO Y
 ### UNIR PADRES CON HIJOS EN COMUN
-########################################################
+#######################################################
 
 ## Recibe el grafo
 # Recorre todos los vertices del grafo. Para cada vertice mira si varios

@@ -14,17 +14,19 @@ def remove_leaves(G, X, Y, Z):
             G.remove_node(node)
             to_explore.update(predecessors)
 
-G = nx.DiGraph()
-nodes = ["A", "B", "C", "D", "E", "F"]
-edges = [("A", "C"), ("B", "C"), ("C", "D"),
-         ("C", "E"), ("D", "F"), ("E", "F")]
 
-G.add_nodes_from(nodes)
-G.add_edges_from(edges)
-nx.draw(G, with_labels=True)
-plt.show()
+if __name__ == "__main__":
+    G = nx.DiGraph()
+    nodes = ["A", "B", "C", "D", "E", "F"]
+    edges = [("A", "C"), ("B", "C"), ("C", "D"),
+            ("C", "E"), ("D", "F"), ("E", "F")]
 
-remove_leaves(G,"A","B",set(["C"]))
+    G.add_nodes_from(nodes)
+    G.add_edges_from(edges)
+    nx.draw(G, with_labels=True)
+    plt.show()
 
-nx.draw(G, with_labels=True)
-plt.show()
+    remove_leaves(G,"A","B",set(["C"]))
+
+    nx.draw(G, with_labels=True)
+    plt.show()

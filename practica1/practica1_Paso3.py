@@ -21,14 +21,14 @@ def quitar_Z(G,Z):
         G.remove_node(nodo)
 
 
-
-G = nx.Graph()
-G.add_nodes_from([1, 2, 3, 4, 5])
-G.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 5)])
-Z = [3, 5]
-quitar_Z(G,Z)
-print(G.nodes())
-print(G.edges())
+if __name__ == "__main__":
+    G = nx.Graph()
+    G.add_nodes_from([1, 2, 3, 4, 5])
+    G.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 5)])
+    Z = [3, 5]
+    quitar_Z(G,Z)
+    print(G.nodes())
+    print(G.edges())
 
 #######################################################
 ### PASO 3 CONSISTE EN QUITAR LOS NODOS DE Z Y

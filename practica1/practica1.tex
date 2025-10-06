@@ -48,7 +48,7 @@ Sin embargo, en una red bayesiana no podríamos tener a todos los nodos unidos a
  
 \section{Complejidad del paso 3}
 En este último paso, queremos ver si  $X \perp _g Y \mid Z$. Para ello, buscamos eliminar los nodos del conjunto $Z$ (junto a sus aristas), con el propósito de ver si $X$ e $Y$ quedan conectados en el grafo. \\ \\
-La complejidad de quitar los nodos de $Z$ es lineal $O(n)$ donde $n$ es el numero de nodos de $Z$, ya que, simplemente hay que recorrer el conjunto y eliminar los nodos.
+La complejidad de quitar los nodos de $Z$ es lineal $O(n)$ donde $n$ es el numero de nodos de $Z$, ya que, simplemente hay que recorrer el conjunto y eliminar los nodos. El peor caso es que $Z$ contenga todos los nodos del grafo, menos $X$ e $Y$ en el cual la complejidad es O(E) ya que se eliminan todas las aristas. \\ \\
 El peor caso en este paso, ocurre cuando tenemos que visitar todos los nodos porque tendríamos que visitar cada nodo y cada arista. El algoritmo es recursivo pero como guardamos en un conjunto los nodos ya visitados, nos aseguramos que pasaremos solamente una vez por cada nodo. Dicho esto, la complejidad temporal sería  $O(V + E)$, siendo $V$ los nodos del grafo, y $E$, las aristas.
 
 \section{Complejidad Total}

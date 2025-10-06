@@ -13,6 +13,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
+\newcommand{\notperpg}{\mathrel{\not\!\perp_g}}
 
 \fancyhead[L]{Universidad de Cantabria}    % L = Left
 \fancyhead[C]{Grado en Matemáticas}       % C = Center
@@ -55,9 +56,31 @@ El algoritmo de eliminación de variables consta de llamar a cada una de las tre
 
 Por lo tanto, la complejidad temporal será de $O(np+np^2+(n+m))$. Como $np^2 > np$ se cumplirá siempre, y en cualquier grafo sin ciclos el número de nodos será superior al número de aristas en al menos una unidad ($n \ge m$, con el máximo valor de m siendo $m = n - 1$), $O(np+np^2+(n+m)) = O(np^2)$ en términos de complejidad.
 
+\section{Ejemplos del algoritmo de separación}
+En el fichero $practica1\_Junto.py$ se han añadido varios ejemplos para probar la eficacia del algoritmo. Cada uno de los ejemplos muestra el estado inicial y la evolución del grafo por cada paso del algoritmo. Los ejemplos se describen a continuación:
 
+\begin{itemize}
+    \item Existe un camino entre $X$ e $Y$ sin ningún $Z \in \textbf{Z}$. 
+    
+    Consecuentemente, $X \notperpg Y \mid \textbf{Z}$.
+    
+    \item Existe un camino entre $X$ e $Y$ que contiene un $Z \in \textbf{Z}$.
 
+    Consecuentemente, $X \perp _g Y \mid \textbf{Z}$.
+    
+    \item $X$ e $Y$ se encuentran en componentes conexas distintas.
 
+    Consecuentemente, $X \perp _g Y \mid \textbf{Z}$ para cualquier conjunto $\textbf{Z}$.
 
+    \item Existe más de un camino entre $X$ e $Y$. Todos los caminos contienen un $Z \in \textbf{Z}$.
+
+    Consecuentemente, $X \perp _g Y \mid \textbf{Z}$.
+
+    \item Existe más de un camino entre $X$ e $Y$. Existe al menos
+    un camino sin ningún $Z \in \textbf{Z}$.
+
+    Consecuentemente, $X \notperpg Y \mid \textbf{Z}$.
+    
+\end{itemize}
 
 \end{document}

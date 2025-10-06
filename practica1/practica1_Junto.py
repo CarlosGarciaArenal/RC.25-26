@@ -26,6 +26,7 @@ def algoritmo_separacion(G, nodes, edges, X, Y, Z):
     print("X:",X,"Y:",Y,"Z:",Z)
 
     nx.draw(G, with_labels=True)
+    plt.suptitle("Grafo inicial: X = " + X + ", Y = " + Y + ", Z = " + str(Z))
     plt.show()
 
     # Paso 1
@@ -34,6 +35,7 @@ def algoritmo_separacion(G, nodes, edges, X, Y, Z):
     print("Aristas tras eliminar hojas:", G.edges())
 
     nx.draw(G, with_labels=True)
+    plt.suptitle("Grafo tras PASO 1")
     plt.show()
 
     # Paso 2
@@ -42,6 +44,7 @@ def algoritmo_separacion(G, nodes, edges, X, Y, Z):
     print("Aristas tras hacer no dirigido y unir padres con hijos en comun:", G.edges())
 
     nx.draw(G, with_labels=True)
+    plt.suptitle("Grafo tras PASO 2")
     plt.show()
 
     # Paso 3
@@ -50,6 +53,7 @@ def algoritmo_separacion(G, nodes, edges, X, Y, Z):
     print("Aristas tras quitar Z:", G.edges())
 
     nx.draw(G, with_labels=True)
+    plt.suptitle("Grafo tras PASO 3")
     plt.show()
 
     # Comprobar si hay caminos entre nodos de X e Y

@@ -29,6 +29,7 @@ if __name__ == "__main__":
     quitar_Z(G,Z)
     print(G.nodes())
     print(G.edges())
+    print(existen_caminos(G,1,4))
 
 #######################################################
 ### PASO 3 CONSISTE EN QUITAR LOS NODOS DE Z Y

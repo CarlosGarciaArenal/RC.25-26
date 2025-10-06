@@ -1,6 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
+# Recorrer los nodos, unir los padres que comparten hijos y hacer el grafo no dirigido
+
 def joinAndIgnore(G):
     newGraph = nx.Graph()
     newGraph.add_nodes_from(G.nodes())
@@ -26,20 +28,3 @@ if __name__ == "__main__":
     nx.draw(G, with_labels=True, node_color="lightblue", node_size=2000, font_size=14)
     plt.show()
 
-
-
-
-
-#######################################################
-### PASO 2 ES HACER QUE EL GRAFO SEA NO DIRIGIDO Y
-### UNIR PADRES CON HIJOS EN COMUN
-#######################################################
-
-## Recibe el grafo
-# Recorre todos los vertices del grafo. Para cada vertice mira si varios
-# varios nodos conectan hacia el en esa direccion (solo aristas direccionadas), si lo hacen crea 
-# un enlace no dirigido entre esos nodos (padres)
-
-
-# habra que mirar is es los dos que son predecessors, ya son predecessors y sucessors entre ellos
-# Primero uno los predecessor y luego recorro de nuevo y lo paso a no dirigido

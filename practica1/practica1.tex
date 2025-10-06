@@ -38,7 +38,7 @@ El paso 1 consiste en identificar aquellos nodos que sean nodos hoja, y eliminar
 Así, el peor caso será aquel en que los nodos $\in X \cup Y \cup Z$ (que no pueden ser eliminados) no tengan ningún predecesor y el primer nodo que se pueda eliminar sea el último en ser explorado. En este caso, se explorarán todos los nodos ($O(n)$), y después se irán explorando de nuevo para ir eliminándolos ($O(n)$), resultando un grafo que contenga únicamente los nodos $\in X \cup Y \cup Z$. \\ \\
 Con esto tenemos una complejidad temporal de \textbf{2n}, siendo \textbf{n} el número de nodos del grafo. Pero, en cada iteración del bucle, se obtienen los predecesores del nodo que se está explorando. El coste de esta acción es $O(p)$, siendo \textbf{p} el número máximo de predecesores de un nodo. Por lo tanto, $p \le m$. En el caso $p = m$, habrá un solo nodo con predecesores, por lo que este nodo tendrá $n - 1$ predecesores, y la complejidad será de $O(2n*m)$, pero rara vez se dará este caso. \\ \\
 Así, la complejidad de eliminar los nodos hoja es la siguiente:
-$$O(2n*p) = O(n*p); \; p \le m$$
+$$O(2n*p) = O(2n*p); \; p \le m$$
 donde \textbf{n} es el número de nodos del grafo y \textbf{p} es el número máximo de predecesores de un nodo.
 
 \section{Complejidad del paso 2}
@@ -54,7 +54,7 @@ El peor caso en este paso, ocurre cuando tenemos que visitar todos los nodos por
 \section{Complejidad Total}
 El algoritmo de eliminación de variables consta de llamar a cada una de las tres funciones desarrolladas anteriormente, en el orden en que se han descrito.
 
-Por lo tanto, la complejidad temporal será de $O(np+np^2+(n+m))$. Como $np^2 > np$ se cumplirá siempre, y en cualquier grafo sin ciclos el número de nodos será superior al número de aristas en al menos una unidad ($n \ge m$, con el máximo valor de m siendo $m = n - 1$), $O(np+np^2+(n+m)) = O(np^2)$ en términos de complejidad temporal.
+Por lo tanto, la complejidad temporal será de $O(np+np^2+(n+m))$. Como $np^2 > np$ se cumplirá siempre, y para un grafo no dirigido el numero maximo de aristas es \binom{n}{2}, por lo que la peor complejidad sería $O(np^2 + n^2) = O(np^2)$.
 
 \section{Ejemplos del algoritmo de separación}
 En el fichero $practica1\_Junto.py$ se han añadido varios ejemplos para probar la eficacia del algoritmo. Cada uno de los ejemplos muestra el estado inicial y la evolución del grafo por cada paso del algoritmo. Los ejemplos se describen a continuación:

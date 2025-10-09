@@ -5,6 +5,7 @@
 \usepackage{amssymb}% to have some extra types of fonts
 \usepackage{amsmath}
 \usepackage{enumitem}
+\usepackage{graphicx}
 %% - writing in Spanish
 \usepackage[latin1]{inputenc}% To type Spanish accents
 \usepackage[spanish]{babel}% to have Spanish captions
@@ -54,7 +55,31 @@ El peor caso en este paso, ocurre cuando tenemos que visitar todos los nodos por
 \section{Complejidad Total}
 El algoritmo de eliminación de variables consta de llamar a cada una de las tres funciones desarrolladas anteriormente, en el orden en que se han descrito.
 
-Por lo tanto, la complejidad temporal será de $O(np+np^2+(n+m))$. Como $np^2 > np$ se cumplirá siempre, y para un grafo no dirigido el numero maximo de aristas es \binom{n}{2}, por lo que la peor complejidad sería $O(np^2 + n^2) = O(np^2)$.
+Por lo tanto, la complejidad temporal será de $O(np+np^2+(n+m))$. Como $np^2 > np$ se cumplirá siempre, y para un grafo no dirigido el numero maximo de aristas es $\binom{n}{2}$,es decir, una arista por cada pareja de nodos, por lo que la peor complejidad sería $O(np^2 + n^2) = O(np^2)$ siendo el peor caso para $p = \binom{n}{2}$ como en el siguiente ejemplo.
+
+Para comprobar la complejidad total, hemos utilizado un grafo dirigido con $n$ nodos, 
+en el que cada nodo $X_i$ (para $i > 0$) es hijo de todos los nodos $X_0, X_1, \dots, X_{i-1}$, 
+excepto el nodo $X_0$, que no tiene padres. 
+De esta manera, se obtiene el mayor número posible de padres por nodo,  o lo que es lo mismo, el mayor número de aristas en el grafo.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{SinQuitarNodosHoja.png}
+    \caption{Peor Caso}
+    \label{fig:peorcaso}
+\end{figure}
+
+En la Figura \ref{fig:peorcaso} hemos usado como $X$ el primer nodo, como $Y$ un nodo separado de los demás y como $Z$ el nodo $X_i$. De esta manera no hay ningún nodo hoja y el paso 1 tarda poco tiempo. Se dejan todos los nodos para el paso 2 que es el que consume todo el tiempo. El paso 3 tiene que recorrer todas las aristas ya que solo se quita $X_i$ y no va a encontrar camino porque $Y$ esta separado.
+
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{NodosHojaHastaMitad.png}
+    \caption{Con Nodos Hoja}
+    \label{fig:nodosHoja}
+\end{figure}
+
+En esta Figura \ref{fig:nodosHoja}, $Z = X_{nodos//2}$ por lo que ahora se podrán quitar como nodos hoja la mitad del grafo. Podemos comprobar que el tiempo para 500 nodos se aproxima a el tiempo para 250 nodos de la Figura \ref{fig:peorcaso}. 
 
 \section{Ejemplos del algoritmo de separación}
 En el fichero $practica1\_Junto.py$ se han añadido varios ejemplos para probar la eficacia del algoritmo. Cada uno de los ejemplos muestra el estado inicial y la evolución del grafo por cada paso del algoritmo. Los ejemplos se describen a continuación:

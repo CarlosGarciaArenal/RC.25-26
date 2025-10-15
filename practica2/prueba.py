@@ -125,13 +125,24 @@ def factor_product(factor1,factor2):
                 valor = factor1.get_value(asignacion1) * factor2.get_value(asignacion2)
                 tao.add_new_asignacion(new_asignacion,valor)
     return tao
+
+def get_factors_with_variable(factors,variable):
+    list = []
+    for factor in factors:
+        if variable in factor.get_variables():
+            list.append(factor)
+    return list
                                                                            
+def inferencia_marginal(order,factors):
+    list = factors
+    for i in order:
+        sublist = get_factors_with_variable(list,i)
+        res = sublist[0]
+        for j in range(1,len(sublist)):
+            res = factor_product(res,sublist[j])
+            list.remove(j)
+        marginalize(res,)
             
-
-            
-
-
-
 A = Variable("A",2)
 B = Variable("B",2)
 C = Variable("C",2)

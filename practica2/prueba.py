@@ -149,13 +149,16 @@ def inferencia_marginal(order,factors):
             res = factor_product(res,sublist[j])
         tau = marginalize(res,i)
         list.append(tau)
-    return list
+    factor = list[0]
+    for i in range(1, len(list)):
+        factor = factor_product(factor, list[i])
+    return factor
 
 def inferencia_condicional(factors, numerator_order, denominator_order):
-    numerator = inferencia_marginal(numerator_order, factors)[0] # en condicional la lista sera siempre de un factor ????
-    denominator = inferencia_marginal(denominator_order, numerator)[0]
+    numerator = inferencia_marginal(numerator_order, factors)
+    denominator = inferencia_marginal(denominator_order, numerator)
     denominator.get_inverse()
-    return numerator / denominator # ???????????? ()
+    return factor_product(numerator, denominator)
 
 
 A = Variable("A",3)
@@ -214,9 +217,11 @@ for d in range(0,D.get_cardinality()):
 phi5 = Factor(asignaciones)
 
 list = [phi1, phi2, phi3, phi4, phi5]
-order = [C, E, D, A]
+num_order = [A, B, C, D]
+den_order = [A, B, C, D, E]
 
-inferencia_marginal(order, list)[0].show_factor()
+
+inferencia_condicional(list, num_order, den_order).show_factor()
             
 """A = Variable("A",2)
 B = Variable("B",2)

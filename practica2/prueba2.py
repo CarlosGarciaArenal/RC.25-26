@@ -76,13 +76,6 @@ class Factor:
         for key in self.asignaciones.keys():
             self.asignaciones[key] = 1 / self.asignaciones[key]
 
-    def filter_by_given_values(self, given_values):
-        list = []
-        for key in self.asignaciones.keys():
-            if given_values.issubset(key):
-                list.append((key, self.asignaciones[key]))
-        return list
-
 """
 Aplica la marginalización de una variable dada a un factor.
 """
@@ -197,7 +190,7 @@ asignaciones = {}
 valores = [0.8, 0.6, 0.2, 0.4]
 i = 0
 for c in range(0,C.get_cardinality()):
-    for a in range(0, A.get_cardinality()):
+    for a in range(0, A.cardinality()):
         key = frozenset({(C.get_name(), c), (A.get_name(), a)})
         asignaciones[key] = valores[i]
         i += 1
@@ -207,7 +200,7 @@ asignaciones = {}
 valores = [0.6, 0.6, 0.4, 0.4, 0.4, 0.6]
 i = 0
 for e in range(0,E.get_cardinality()):
-    for b in range(0, B.get_cardinality()):
+    for b in range(0, B.cardinality()):
         key = frozenset({(B.get_name(), b), (E.get_name(), e)})
         asignaciones[key] = valores[i]
         i += 1
@@ -217,8 +210,8 @@ asignaciones = {}
 valores = [0.8, 0.7, 0.6, 0.7, 0.5, 0.3, 0.1, 0.2, 0.2, 0.1, 0.2, 0.3, 0.1, 0.1, 0.2, 0.2, 0.3, 0.4]
 i = 0
 for d in range(0,D.get_cardinality()):
-    for a in range(0, A.get_cardinality()):
-        for b in range(0, B.get_cardinality()):
+    for a in range(0, A.cardinality()):
+        for b in range(0, B.cardinality()):
             key = frozenset({(A.get_name(), a), (B.get_name(), b), (D.get_name(), d)})
             asignaciones[key] = valores[i]
             i += 1
@@ -228,18 +221,18 @@ asignaciones = {}
 valores = [0.6, 0.5, 0.4, 0.5, 0.3, 0.1, 0.2, 0.3, 0.3, 0.2, 0.3, 0.4, 0.2, 0.2, 0.3, 0.3, 0.4, 0.5]
 i = 0
 for f in range(0,F.get_cardinality()):
-    for c in range(0, C.get_cardinality()):
-        for d in range(0, D.get_cardinality()):
+    for c in range(0, C.cardinality()):
+        for d in range(0, D.cardinality()):
             key = frozenset({(F.get_name(), f), (C.get_name(), c), (D.get_name(), d)})
             asignaciones[key] = valores[i]
             i += 1
 phi5 = Factor(asignaciones)
 
 list = [phi1, phi2, phi3, phi4, phi5]
-num_order = [A,C,E]
-den_order = [F]
+num_order = [B, C, D]
+den_order = [A]
 
-print(inferencia_condicional(list, num_order, den_order).filter_by_given_values(frozenset([("B", 2), ("D", 1)])))
+inferencia_condicional(list, num_order, den_order).show_factor()
             
 """A = Variable("A",2)
 B = Variable("B",2)

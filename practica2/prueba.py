@@ -218,7 +218,7 @@ phi5 = Factor(asignaciones)
 
 list = [phi1, phi2, phi3, phi4, phi5]
 num_order = [A, B, C, D]
-den_order = [A, B, C, D, E]
+den_order = [E]
 
 
 inferencia_condicional(list, num_order, den_order).show_factor()

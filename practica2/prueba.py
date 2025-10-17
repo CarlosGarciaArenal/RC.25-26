@@ -156,7 +156,7 @@ def inferencia_marginal(order,factors):
 
 def inferencia_condicional(factors, numerator_order, denominator_order):
     numerator = inferencia_marginal(numerator_order, factors)
-    denominator = inferencia_marginal(denominator_order, numerator)
+    denominator = inferencia_marginal(denominator_order, [numerator])
     denominator.get_inverse()
     return factor_product(numerator, denominator)
 
@@ -217,8 +217,8 @@ for d in range(0,D.get_cardinality()):
 phi5 = Factor(asignaciones)
 
 list = [phi1, phi2, phi3, phi4, phi5]
-num_order = [A, B, C, D]
-den_order = [A, B, C, D, E]
+num_order = [B, C, D]
+den_order = [A]
 
 
 inferencia_condicional(list, num_order, den_order).show_factor()

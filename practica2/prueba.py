@@ -1,4 +1,6 @@
 import numpy 
+from itertools import product
+
 
 """
 Clase Variable
@@ -41,12 +43,17 @@ class Factor:
     o comenzar vacío. También vamos a tener un set que simplemente
     contiene las variables que para la multiplicación será útil.
     """
-    def __init__(self,asignaciones=None):
+    def __init__(self,asignaciones=None,variables=None):
         if asignaciones:
             self.asignaciones = asignaciones
         else:
             self.asignaciones = {}
-    
+   
+        if variables:
+            self.variables = variables
+        else:
+            self.variables = set()
+
     def add_new_asignacion(self,fila,valor):
         self.asignaciones[fila] = valor
 
@@ -59,15 +66,11 @@ class Factor:
     def get_asignaciones(self):
         return self.asignaciones
     
+    def get_variables_name(self):
+        return {var.get_name() for var in self.variables}
+
     def get_variables(self):
-        # Tomamos una fila cualquiera
-        # Por ejemplo:
-        # {("A",0),("B",0),("C",0)} obtenemos {"A","B","C"}
-        random_asignacion = next(iter(self.asignaciones.keys()))
-        variables = set()
-        for ele in random_asignacion: #O(m)
-            variables.add(ele[0]) 
-        return variables
+        return self.variables
 
     def show_factor(self):
         print(self.asignaciones)
@@ -111,8 +114,8 @@ def marginalize(factor,variable):
         # n >> m, se puede considerar lineal O(n)
 
 def factor_product(factor1,factor2):
-    variables_factor1 = factor1.get_variables() #O(m) =aprox O(1)          #ej {"A","B","C"}
-    variables_factor2 = factor2.get_variables() #O(m) =aprox O(1)          #ej {"B","C","D"}
+    variables_factor1 = factor1.get_variables_name() #O(m) =aprox O(1)          #ej {"A","B","C"}
+    variables_factor2 = factor2.get_variables_name() #O(m) =aprox O(1)          #ej {"B","C","D"}
     variables_comunes = variables_factor1.intersection(variables_factor2)  #ej {"B","C"}
     asignaciones_factor1 = factor1.get_asignaciones().keys()
     asignaciones_factor2 = factor2.get_asignaciones().keys()
@@ -129,27 +132,77 @@ def factor_product(factor1,factor2):
                 marginalizado.add_new_asignacion(new_asignacion,valor)
     return marginalizado
 
+def factor_product_itertools(factor1,factor2):
+    variables_factor1 = factor1.get_variables() 
+    variables_factor2 = factor2.get_variables()
+    variables_finales = list(variables_factor1.union(variables_factor2))
+
+    rangos = [range(var.get_cardinality()) for var in variables_finales]
+    asignaciones_finales = []
+    
+    for combinacion in product(*rangos):  ## Este for es para sacar todas las asignaciones, saca todas las combinaciones de las cardinalidades
+        asignacion = frozenset(
+            (variables_finales[i].get_name(), combinacion[i]) for i in range(len(variables_finales))) ## Aqui se le asigna a cada variable su numero para la tupla
+        asignaciones_finales.append(asignacion)
+
+    resultado = Factor()
+    variables_factor1 = factor1.get_variables_name()
+    variables_factor2 = factor2.get_variables_name()
+    for asignacion in asignaciones_finales:
+        key_factor1 = []
+        key_factor2 = []
+
+        for tupla in asignacion:
+            variable = tupla[0]
+            if variable in variables_factor1:
+                key_factor1.append(tupla)
+            if variable in variables_factor2:
+                key_factor2.append(tupla)
+
+        key_factor1 = frozenset(set(key_factor1))
+        key_factor2 = frozenset(set(key_factor2))
+
+
+        valor_factor1 = factor1.get_value(key_factor1)
+        valor_factor2 = factor2.get_value(key_factor2)
+
+        resultado.add_new_asignacion(asignacion, valor_factor1 * valor_factor2)
+
+    return resultado
+
+
 def get_factors_with_variable(factors,variable):
     sublist = [] # Factores que contienen la variable
     remaining = [] # Factores que no contienen la variable
     
     for factor in factors:
-        if variable in factor.get_variables():
+        if variable in factor.get_variables_name():
             sublist.append(factor)
         else:
             remaining.append(factor)
     return sublist, remaining
                                                                            
 def inferencia_marginal(order,factors):
-    list = factors
+    factor_list = factors
     for i in order:
-        sublist, list = get_factors_with_variable(list,i.get_name())
+        sublist, factor_list = get_factors_with_variable(factor_list,i.get_name())
         res = sublist[0]
         for j in range(1,len(sublist)):
             res = factor_product(res,sublist[j])
         tau = marginalize(res,i)
-        list.append(tau)
-    return list
+        factor_list.append(tau)
+    return factor_list
+
+def inferencia_marginal_itertools(order,factors):
+    factor_list = factors
+    for i in order:
+        sublist, factor_list = get_factors_with_variable(factor_list,i.get_name())
+        res = sublist[0]
+        for j in range(1,len(sublist)):
+            res = factor_product_itertools(res,sublist[j])
+        tau = marginalize(res,i)
+        factor_list.append(tau)
+    return factor_list
 
 def inferencia_condicional(factors, numerator_order, denominator_order):
     numerator = inferencia_marginal(numerator_order, factors)[0] # en condicional la lista sera siempre de un factor ????
@@ -158,116 +211,122 @@ def inferencia_condicional(factors, numerator_order, denominator_order):
     return numerator / denominator # ???????????? ()
 
 
-A = Variable("A",3)
-B = Variable("B", 2)
-C = Variable("C", 3)
-D = Variable("D", 2)
-E = Variable("E", 2)
+if __name__ == "__main__":
+    
+    A = Variable("A", 3)
+    B = Variable("B", 2)
+    C = Variable("C", 3)
+    D = Variable("D", 2)
+    E = Variable("E", 2)
+    asignaciones = {}
+    valores = [0.3, 0.1, 0.7, 0.2, 0.4, 0.2, 0.2, 0.3, 0.3, 0.7, 0.1, 0.5]
+    i = 0
+    for a in range(0,A.get_cardinality()):
+        for d in range(0,D.get_cardinality()):
+            for e in range(0,E.get_cardinality()):
+                key = frozenset({(A.get_name(), a),(D.get_name(), d),(E.get_name(), e)})
+                asignaciones[key] = valores[i]
+                i += 1
+    phi1 = Factor(asignaciones, {A,D,E})
 
-asignaciones = {}
-valores = [0.3, 0.1, 0.7, 0.2, 0.4, 0.2, 0.2, 0.3, 0.3, 0.7, 0.1, 0.5]
-i = 0
-for a in range(0,A.get_cardinality()):
-    for d in range(0,D.get_cardinality()):
-        for e in range(0,E.get_cardinality()):
-            key = frozenset({(A.get_name(), a),(D.get_name(), d),(E.get_name(), e)})
+    asignaciones = {}
+    valores = [0.7, 0.4, 0.1, 0.3, 0.6, 0.9]
+    i = 0
+    for b in range(0,B.get_cardinality()):
+        for a in range(0,A.get_cardinality()):
+            key = frozenset({(B.get_name(), b),(A.get_name(), a)})
             asignaciones[key] = valores[i]
             i += 1
-phi1 = Factor(asignaciones)
+    phi2 = Factor(asignaciones, {A,B})
 
-asignaciones = {}
-valores = [0.7, 0.4, 0.1, 0.3, 0.6, 0.9]
-i = 0
-for b in range(0,B.get_cardinality()):
-    for a in range(0,A.get_cardinality()):
-        key = frozenset({(B.get_name(), b),(A.get_name(), a)})
-        asignaciones[key] = valores[i]
-        i += 1
-phi2 = Factor(asignaciones)
+    asignaciones = {}
+    valores = [0.6, 0.3, 0.3, 0.4, 0.1, 0.3]
+    i = 0
+    for c in range(0,C.get_cardinality()):
+        for e in range(0,E.get_cardinality()):
+            key = frozenset({(C.get_name(), c),(E.get_name(), e)})
+            asignaciones[key] = valores[i]
+            i += 1
+    phi3 = Factor(asignaciones, {C,E})
 
-asignaciones = {}
-valores = [0.6, 0.3, 0.3, 0.4, 0.1, 0.3]
-i = 0
-for c in range(0,C.get_cardinality()):
+    asignaciones = {}
+    valores = [0.8, 0.2]
+    i = 0
     for e in range(0,E.get_cardinality()):
-        key = frozenset({(C.get_name(), c),(E.get_name(), e)})
+        key = frozenset({(E.get_name(), e)})
         asignaciones[key] = valores[i]
         i += 1
-phi3 = Factor(asignaciones)
+    phi4 = Factor(asignaciones, {E})
 
-asignaciones = {}
-valores = [0.8, 0.2]
-i = 0
-for e in range(0,E.get_cardinality()):
-    key = frozenset({(E.get_name(), e)})
-    asignaciones[key] = valores[i]
-    i += 1
-phi4 = Factor(asignaciones)
+    asignaciones = {}
+    valores = [0.6, 0.4]
+    i = 0
+    for d in range(0,D.get_cardinality()):
+        key = frozenset({(D.get_name(), d)})
+        asignaciones[key] = valores[i]
+        i += 1
+    phi5 = Factor(asignaciones, {D})
 
-asignaciones = {}
-valores = [0.6, 0.4]
-i = 0
-for d in range(0,D.get_cardinality()):
-    key = frozenset({(D.get_name(), d)})
-    asignaciones[key] = valores[i]
-    i += 1
-phi5 = Factor(asignaciones)
+    factor_list = [phi1, phi2, phi3, phi4, phi5]
+    order = [C, E, D, A]
 
-list = [phi1, phi2, phi3, phi4, phi5]
-order = [C, E, D, A]
 
-inferencia_marginal(order, list)[0].show_factor()
-            
-"""A = Variable("A",2)
-B = Variable("B",2)
-C = Variable("C",2)
-valores = [0.01,0.02,0.06,0.08,0.03,0.06,0.12,0.16]
-asignaciones = {}
-i = 0
-for a in range(0,A.get_cardinality()):
+    inferencia_marginal(order, factor_list)[0].show_factor()
+
+    inferencia_marginal_itertools(order, factor_list)[0].show_factor()
+
+
+
+    """A = Variable("A",2)
+    B = Variable("B",2)
+    C = Variable("C",2)
+    valores = [0.01,0.02,0.06,0.08,0.03,0.06,0.12,0.16]
+    asignaciones = {}
+    i = 0
+    for a in range(0,A.get_cardinality()):
+        for b in range(0,B.get_cardinality()):
+            for c in range(0,C.get_cardinality()):
+                key = frozenset({(A.get_name(), a),(B.get_name(), b),(C.get_name(), c)})
+                asignaciones[key] = valores[i]
+                i += 1
+
+    print("-------------------------------------")
+    print("Factor phi1:")
+    phi1 = Factor(asignaciones)
+    phi1.show_factor()
+    print("-------------------------------------")
+    print("Aplicamos marginalización sobre phi1:")
+    print(f"Variable a marginalizar: {B.get_name()}")
+    print("Factor tao1:")
+    tau1 = marginalize(phi1,B)
+    tau1.show_factor()
+    print("-------------------------------------")
+
+    A = Variable("A",2)
+    B = Variable("B",2)
+    C = Variable("C",2)
+    valores = [0.1,0.2,0.3,0.4]
+    asignaciones1 = {}
+    asignaciones2 = {}
+    i = 0
+    for a in range(0,A.get_cardinality()):
+        for b in range(0,B.get_cardinality()):
+            key = frozenset({(A.get_name(), a),(B.get_name(), b)})
+            asignaciones1[key] = valores[i]
+            i += 1
+    i = 0
     for b in range(0,B.get_cardinality()):
         for c in range(0,C.get_cardinality()):
-            key = frozenset({(A.get_name(), a),(B.get_name(), b),(C.get_name(), c)})
-            asignaciones[key] = valores[i]
+            key = frozenset({(B.get_name(), b),(C.get_name(), c)})
+            asignaciones2[key] = valores[i]
             i += 1
-
-print("-------------------------------------")
-print("Factor phi1:")
-phi1 = Factor(asignaciones)
-phi1.show_factor()
-print("-------------------------------------")
-print("Aplicamos marginalización sobre phi1:")
-print(f"Variable a marginalizar: {B.get_name()}")
-print("Factor tao1:")
-tau1 = marginalize(phi1,B)
-tau1.show_factor()
-print("-------------------------------------")
-
-A = Variable("A",2)
-B = Variable("B",2)
-C = Variable("C",2)
-valores = [0.1,0.2,0.3,0.4]
-asignaciones1 = {}
-asignaciones2 = {}
-i = 0
-for a in range(0,A.get_cardinality()):
-    for b in range(0,B.get_cardinality()):
-        key = frozenset({(A.get_name(), a),(B.get_name(), b)})
-        asignaciones1[key] = valores[i]
-        i += 1
-i = 0
-for b in range(0,B.get_cardinality()):
-    for c in range(0,C.get_cardinality()):
-        key = frozenset({(B.get_name(), b),(C.get_name(), c)})
-        asignaciones2[key] = valores[i]
-        i += 1
-print("Factor phi1:")
-phi1 = Factor(asignaciones1)
-phi1.show_factor()
-print("Factor phi2:")
-phi2 = Factor(asignaciones2)
-phi2.show_factor()
-print("Producto:")
-factor_product(phi1,phi2).show_factor()"""
+    print("Factor phi1:")
+    phi1 = Factor(asignaciones1)
+    phi1.show_factor()
+    print("Factor phi2:")
+    phi2 = Factor(asignaciones2)
+    phi2.show_factor()
+    print("Producto:")
+    factor_product(phi1,phi2).show_factor()"""
 
 

@@ -269,7 +269,7 @@ if __name__ == "__main__":
     phi5 = Factor(asignaciones, {C, D, F})
 
     factor_list = [phi1, phi2, phi3, phi4, phi5]
-    num_order = [A,C,E]
-    den_order = [F]
+    num_order = [A,B]
+    den_order = [E]
 
-    print(inferencia_condicional_itertools(factor_list, num_order, den_order).filter_by_given_values(frozenset([("B", 2), ("D", 1)])))
+    print(inferencia_condicional_itertools(factor_list, num_order, den_order).filter_by_given_values(frozenset([("C", 1), ("D", 1), ("F", 1)])))

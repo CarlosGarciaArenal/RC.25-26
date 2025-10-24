@@ -45,13 +45,13 @@ class Factor:
     o comenzar vacío. También vamos a tener un set que simplemente
     contiene las variables que para la multiplicación será útil.
     """
-    def __init__(self,asignaciones=None,variables=None):
+    def __init__(self,asignaciones=None, variables=None):
         if asignaciones:
             self.asignaciones = asignaciones
         else:
             self.asignaciones = {}
         if variables:
-            self.variables = variables
+            self.variables = set(variables)
         else:
             self.variables = set()
 
@@ -71,7 +71,7 @@ class Factor:
         return {var.get_name() for var in self.variables}
 
     def get_variables(self):
-        return {var for var in self.variables}
+        return self.variables
 
     def show_factor(self):
         print(self.asignaciones)
@@ -125,19 +125,20 @@ def marginalize(factor,variable):
 def factor_product_itertools(factor1,factor2):
     variables_factor1 = factor1.get_variables() 
     variables_factor2 = factor2.get_variables()
-    variables_finales = list(variables_factor1.union(variables_factor2))
+    variables_finales = variables_factor1.union(variables_factor2)
 
     rangos = [range(var.get_cardinality()) for var in variables_finales]
     asignaciones_finales = []
     
     for combinacion in product(*rangos):  ## Este for es para sacar todas las asignaciones, saca todas las combinaciones de las cardinalidades
-        asignacion = frozenset(
-            (variables_finales[i].get_name(), combinacion[i]) for i in range(len(variables_finales))) ## Aqui se le asigna a cada variable su numero para la tupla
-        asignaciones_finales.append(asignacion)
+        asignacion =  [(variables_finales[i].get_name(), combinacion[i]) for i in range(len(variables_finales))] ## Aqui se le asigna a cada variable su numero para la tupla
+
+        asignaciones_finales.append(frozenset(asignacion))
 
     resultado = Factor(None, variables_finales)
     variables_factor1 = factor1.get_variables_name()
     variables_factor2 = factor2.get_variables_name()
+
     for asignacion in asignaciones_finales:
         key_factor1 = []
         key_factor2 = []
@@ -177,6 +178,7 @@ def get_factors_with_variable(factors,variable):
         else:
             remaining.append(factor)
     return sublist, remaining
+
 
 def inferencia_marginal_itertools(order,factors):
     factor_list = factors
@@ -269,7 +271,8 @@ if __name__ == "__main__":
     phi5 = Factor(asignaciones, {C, D, F})
 
     factor_list = [phi1, phi2, phi3, phi4, phi5]
-    num_order = [A,C,E]
-    den_order = [F]
+    
+    num_order = [A,B]
+    den_order = [E]
 
-    print(inferencia_condicional_itertools(factor_list, num_order, den_order).filter_by_given_values(frozenset([("B", 2), ("D", 1)])))
+    print(inferencia_condicional_itertools(factor_list, num_order, den_order).filter_by_given_values(frozenset([("C", 1), ("D", 1), ("F", 1)])))

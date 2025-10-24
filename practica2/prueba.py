@@ -174,6 +174,7 @@ C = Variable("C", 2)
 D = Variable("D", 3)
 E = Variable("E", 2)
 F = Variable("F", 3)
+G = Variable("G", 2)
 
 asignaciones = {}
 valores = [0.6, 0.4]
@@ -236,10 +237,10 @@ for f in range(0,F.get_cardinality()):
 phi6 = Factor(asignaciones)
 
 list = [phi1, phi2, phi3, phi4, phi5, phi6]
-num_order = [A,C,E]
-den_order = [F]
+num_order = [A,B]
+den_order = [E]
 
-print(inferencia_condicional(list, num_order, den_order).filter_by_given_values(frozenset([("B", 2), ("D", 1)])))
+print(inferencia_condicional(list, num_order, den_order).filter_by_given_values(frozenset([("C", 1), ("D", 1), ("F", 1)])))
             
 """A = Variable("A",2)
 B = Variable("B",2)

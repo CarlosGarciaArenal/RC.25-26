@@ -41,44 +41,12 @@ class Factor:
     o comenzar vacío. También vamos a tener un set que simplemente
     contiene las variables que para la multiplicación será útil.
     """
-    def __init__(self,variables, valores):
-        """
-        Constructor del factor. Necesita la lista de variables y un array
-        con los valores, ordenados por columnas, de forma que se empieza en
-        con el valor de la primera columna y primera fila, después sigue el
-        valor de la primera columna, segunda fila, etc...
-        """
-        ## Forma naterior
-        # if asignaciones:
-        # self.asignaciones = asignaciones
-        # else 
+    def __init__(self, asignaciones=None):
+        if asignaciones is None:
+            self.asignaciones = {}
+        else:
+            self.asignaciones = asignaciones
 
-        # init, init_1 e init_2 son el concepto recursivo
-        asignaciones = {}
-        i = 0
-
-        for f in range(0,F.get_cardinality()):
-            for c in range(0, C.get_cardinality()):
-                for d in range(0, D.get_cardinality()):
-                    key = frozenset({(F.get_name(), f), (C.get_name(), c), (D.get_name(), d)})
-                    asignaciones[key] = valores[i]
-                    i += 1
-        phi5 = Factor(asignaciones)
-
-    def _init_1(self, variable, asignaciones):
-        for v in range(0,variable.get_cardinality()):
-            key = frozenset((variable.get_name(), v))
-            asignaciones[key] = valores[i]
-            i += 1
-        return asignaciones
-    
-    def _init_2(self, var1, var2):
-        for var1 in range(0, var1.get_cardinality()):
-            for var2 in range(0, var2.get_cardinality()):
-                key = frozenset({(F.get_name(), f), (C.get_name(), c), (D.get_name(), d)})
-                asignaciones[key] = valores[i]
-                i += 1
-    
     def add_new_asignacion(self,fila,valor):
         self.asignaciones[fila] = valor
 
@@ -265,9 +233,9 @@ for f in range(0,F.get_cardinality()):
             key = frozenset({(F.get_name(), f), (C.get_name(), c), (D.get_name(), d)})
             asignaciones[key] = valores[i]
             i += 1
-phi5 = Factor(asignaciones)
+phi6 = Factor(asignaciones)
 
-list = [phi1, phi2, phi3, phi4, phi5]
+list = [phi1, phi2, phi3, phi4, phi5, phi6]
 num_order = [A,C,E]
 den_order = [F]
 
@@ -324,5 +292,3 @@ phi2 = Factor(asignaciones2)
 phi2.show_factor()
 print("Producto:")
 factor_product(phi1,phi2).show_factor()"""
-
-import random

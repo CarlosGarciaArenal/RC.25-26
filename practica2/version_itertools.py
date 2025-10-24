@@ -129,7 +129,9 @@ def factor_product_itertools(factor1,factor2):
 
     rangos = [range(var.get_cardinality()) for var in variables_finales]
     asignaciones_finales = []
-    
+
+    variables_finales = list(variables_finales)
+
     for combinacion in product(*rangos):  ## Este for es para sacar todas las asignaciones, saca todas las combinaciones de las cardinalidades
         asignacion =  [(variables_finales[i].get_name(), combinacion[i]) for i in range(len(variables_finales))] ## Aqui se le asigna a cada variable su numero para la tupla
 
@@ -268,11 +270,10 @@ if __name__ == "__main__":
                 key = frozenset({(F.get_name(), f), (C.get_name(), c), (D.get_name(), d)})
                 asignaciones[key] = valores[i]
                 i += 1
-    phi5 = Factor(asignaciones, {C, D, F})
+    phi6 = Factor(asignaciones, {C, D, F})
 
-    factor_list = [phi1, phi2, phi3, phi4, phi5]
-    
+    factores_list = [phi1, phi2, phi3, phi4, phi5, phi6]
     num_order = [A,B]
     den_order = [E]
 
-    print(inferencia_condicional_itertools(factor_list, num_order, den_order).filter_by_given_values(frozenset([("C", 1), ("D", 1), ("F", 1)])))
+    print(inferencia_condicional_itertools(factores_list, num_order, den_order).filter_by_given_values(frozenset([("C", 1), ("D", 1), ("F", 1)])))

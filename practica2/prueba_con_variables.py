@@ -41,11 +41,15 @@ class Factor:
     o comenzar vacío. También vamos a tener un set que simplemente
     contiene las variables que para la multiplicación será útil.
     """
-    def __init__(self,asignaciones=None):
-        if asignaciones is None:
-            self.asignaciones = {}
-        else:
+    def __init__(self,asignaciones=None,variables=None):
+        if asignaciones:
             self.asignaciones = asignaciones
+        else:
+            self.asignaciones = {}
+        if variables:
+            self.variables = variables
+        else:
+            self.variables = set()
 
     def add_new_asignacion(self,fila,valor):
         self.asignaciones[fila] = valor
@@ -183,7 +187,7 @@ for a in range(0,A.get_cardinality()):
     key = frozenset({(A.get_name(), a)})
     asignaciones[key] = valores[i]
     i += 1
-phi1 = Factor(asignaciones)
+phi1 = Factor(asignaciones, {A})
 
 asignaciones = {}
 valores = [0.4, 0.4, 0.2]
@@ -192,7 +196,7 @@ for b in range(0,B.get_cardinality()):
     key = frozenset({(B.get_name(), b)})
     asignaciones[key] = valores[i]
     i += 1
-phi2 = Factor(asignaciones)
+phi2 = Factor(asignaciones, {B})
 
 asignaciones = {}
 valores = [0.8, 0.6, 0.2, 0.4]
@@ -202,7 +206,7 @@ for c in range(0,C.get_cardinality()):
         key = frozenset({(C.get_name(), c), (A.get_name(), a)})
         asignaciones[key] = valores[i]
         i += 1
-phi3 = Factor(asignaciones)
+phi3 = Factor(asignaciones, {A, C})
 
 asignaciones = {}
 valores = [0.6, 0.6, 0.4, 0.4, 0.4, 0.6]
@@ -212,7 +216,7 @@ for e in range(0,E.get_cardinality()):
         key = frozenset({(B.get_name(), b), (E.get_name(), e)})
         asignaciones[key] = valores[i]
         i += 1
-phi4 = Factor(asignaciones)
+phi4 = Factor(asignaciones, {B, E})
 
 asignaciones = {}
 valores = [0.8, 0.7, 0.6, 0.7, 0.5, 0.3, 0.1, 0.2, 0.2, 0.1, 0.2, 0.3, 0.1, 0.1, 0.2, 0.2, 0.3, 0.4]
@@ -223,7 +227,7 @@ for d in range(0,D.get_cardinality()):
             key = frozenset({(A.get_name(), a), (B.get_name(), b), (D.get_name(), d)})
             asignaciones[key] = valores[i]
             i += 1
-phi5 = Factor(asignaciones)
+phi5 = Factor(asignaciones, {A, B, D})
 
 asignaciones = {}
 valores = [0.6, 0.5, 0.4, 0.5, 0.3, 0.1, 0.2, 0.3, 0.3, 0.2, 0.3, 0.4, 0.2, 0.2, 0.3, 0.3, 0.4, 0.5]
@@ -234,7 +238,7 @@ for f in range(0,F.get_cardinality()):
             key = frozenset({(F.get_name(), f), (C.get_name(), c), (D.get_name(), d)})
             asignaciones[key] = valores[i]
             i += 1
-phi6 = Factor(asignaciones)
+phi6 = Factor(asignaciones, {C, D, F})
 
 list = [phi1, phi2, phi3, phi4, phi5, phi6]
 num_order = [A,B]

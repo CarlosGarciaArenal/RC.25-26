@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import random
 import time
 from itertools import product
-from version_itertools import *
+from practica2 import *
 from enum import Enum
 
 
@@ -84,10 +84,11 @@ def crear_lista_factores_prueba_orden(fila1,fila2):
 if __name__ == "__main__":
 
     pruebas = 1
+    cardinalidad = 2
     if(pruebas == 0):
 
         numero_variables = 18
-        listaVariables = crear_lista_variables(numero_variables,2)  
+        listaVariables = crear_lista_variables(numero_variables,cardinalidad)  
         num_factores = [f for f in range(3, numero_variables + 1)]
         tiempos_itertools = []
         for n in num_factores:
@@ -114,7 +115,7 @@ if __name__ == "__main__":
 
         fila1_num = 2
         fila2_num = 16
-        var = crear_lista_variables(fila1_num + fila2_num,2)
+        var = crear_lista_variables(fila1_num + fila2_num,cardinalidad)
         tiempos_orden_bueno = []
         tiempos_orden_malo = []
         for n in range(3,fila2_num + 1):

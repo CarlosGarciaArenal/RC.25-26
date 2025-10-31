@@ -29,7 +29,6 @@ G4.add_edges_from(edges)
 def asignar_direccionalidad(arbol):
     nodo_elegido = list(arbol.nodes)[0]
 
-    neighbours = list(nx.neighbors(arbol, nodo_elegido))
     to_explore = set(nodo_elegido)
     explorados = set()
 

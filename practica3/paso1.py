@@ -108,6 +108,44 @@ def forma_ciclo(nodo1, nodo2, grafo):
                     pila.append(vecino)
     return encontrado
 
+
+
+def obtener_arbol_conjuntos(pesos_ordenados,variables):
+    G = nx.Graph()
+    lista_conjuntos = []
+
+    for (vars,peso) in pesos_ordenados:
+        nodo1,nodo2 = vars
+        indice_nodo1 = -1
+        indice_nodo2 = -1
+        
+        for i in range(0,len(lista_conjuntos)):
+            if nodo1 in lista_conjuntos[i]:
+                indice_nodo1 = i
+            if nodo2 in lista_conjuntos[i]:
+                indice_nodo2 = i
+        
+        if indice_nodo1 < 0 and indice_nodo2 < 0:
+            lista_conjuntos.append({nodo1,nodo2})
+            G.add_edge(nodo1,nodo2)
+        elif indice_nodo1 < 0:
+            lista_conjuntos[indice_nodo2].update({nodo1})
+            G.add_edge(nodo1,nodo2)
+        elif indice_nodo2 < 0:
+            lista_conjuntos[indice_nodo1].update({nodo2})
+            G.add_edge(nodo1,nodo2)
+        elif indice_nodo2 != indice_nodo1:
+            lista_conjuntos[indice_nodo2].update(lista_conjuntos[indice_nodo1])
+            lista_conjuntos.pop(indice_nodo1)
+            G.add_edge(nodo1,nodo2)
+        else:
+            continue
+
+        if(len(variables) == G.number_of_edges() + 1):
+            break
+    
+    return G
+
 # Paso 3: Asignar direccionalidad al árbol
 def asignar_direccionalidad(arbol):
     if not arbol.nodes:
@@ -131,23 +169,33 @@ def asignar_direccionalidad(arbol):
                 arbol_dirigido.add_edge(nodo_actual, vecino)
     return arbol_dirigido
 
+if __name__ == "__main__":
+    pesos = obtener_pesos(variables, tablas)
+    print(pesos)
+ 
+    grafo = obtener_arbol(pesos, variables)
+    grafo2 = obtener_arbol_conjuntos(pesos, variables)
 
-pesos = obtener_pesos(variables, tablas)
-print(pesos)
-grafo = obtener_arbol(pesos,variables)
-# quiero plotear el arbol del paso 2
-pos = nx.spring_layout(grafo)
-nx.draw(grafo, pos, with_labels=True)
-labels = nx.get_edge_attributes(grafo, 'weight')
-nx.draw_networkx_edge_labels(grafo, pos, edge_labels=labels)
-plt.show()
-dir_arbol = asignar_direccionalidad(grafo)
-# quiero plotear el grafo de nuevo
-pos = nx.spring_layout(dir_arbol)
-nx.draw(dir_arbol, pos, with_labels=True)
-labels = nx.get_edge_attributes(dir_arbol, 'weight')
-nx.draw_networkx_edge_labels(dir_arbol, pos, edge_labels=labels)
-plt.show()
+    plt.figure(figsize=(10, 5))  
+    plt.subplot(1, 2, 1)
+    pos1 = nx.spring_layout(grafo)  
+    nx.draw(grafo, pos1, with_labels=True, node_color="lightblue", node_size=1000)
+    plt.title("litos")
+
+    plt.subplot(1, 2, 2)
+    pos2 = nx.spring_layout(grafo2)
+    nx.draw(grafo2, pos2, with_labels=True, node_color="lightgreen", node_size=1000)
+    plt.title("conjuntos")
+
+    plt.show()
+
+    dir_arbol = asignar_direccionalidad(grafo)
+    # quiero plotear el grafo de nuevo
+    pos = nx.spring_layout(dir_arbol)
+    nx.draw(dir_arbol, pos, with_labels=True)
+    labels = nx.get_edge_attributes(dir_arbol, 'weight')
+    nx.draw_networkx_edge_labels(dir_arbol, pos, edge_labels=labels)
+    plt.show()
 
 
 

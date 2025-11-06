@@ -1,4 +1,6 @@
 import math
+import matplotlib.pyplot as plt
+import networkx as nx
 
 class Variable:
     def __init__(self, nombre, cardinalidad):
@@ -44,7 +46,7 @@ C = Variable('C',2)
 
 variables = [A,B,C]
 
-
+# Paso 1: Obtener los pesos de las aristas
 def obtener_pesos(variables, tablas):
     pesos = []
     for i in range(len(variables)):
@@ -70,10 +72,82 @@ def obtener_pesos(variables, tablas):
 
     return pesos
 
+# Paso 2: Obtener el árbol de recubrimiento máximo usando networkx, voy añadiendo las aristas de mayor peso que no forman un ciclo
+def obtener_arbol(pesos_ordenados,variables):
+    G = nx.Graph()
+    # Pongo los nodos en el grafo
+    nombres = [var.get_nombre() for var in variables]
+    for nombre in nombres:
+        G.add_node(nombre)
+        # recorro los pesos que están ordenados de mayor a menor peso (facilita las cosas)
+    for (vars, peso) in pesos_ordenados:
+        nodo1, nodo2 = list(vars)
+        # Si uno de los nodos no está en el grafo, no puede haber un ciclo añadiendo la arista
+        if not forma_ciclo(nodo1, nodo2, G):
+            G.add_edge(nodo1, nodo2, weight=peso)
+    # Crear un nuevo grafo solo con las aristas del árbol
+    return G
+
+# Función auxiliar para determinar si al añadir una arista se forma un ciclo o no (retorna un booleano)
+# es una busqueda en profundidad desde nodo1 hasta nodo2
+def forma_ciclo(nodo1, nodo2, grafo):
+    visitados = set() # set de visitados
+    pila = [nodo1] # pila para la busqueda en profundidad
+    encontrado = False # bandera para saber si se encontro el camino
+    # La complejidad maxima de esta busqueda es O(n+e) siendo n el numero de nodos y e las aristas
+    while pila:
+        actual = pila.pop()
+        if actual == nodo2:
+            encontrado = True
+            break
+        if actual not in visitados:
+            visitados.add(actual)
+            vecinos = list(grafo.neighbors(actual))
+            for vecino in vecinos:
+                if vecino not in visitados:
+                    pila.append(vecino)
+    return encontrado
+
+# Paso 3: Asignar direccionalidad al árbol
+def asignar_direccionalidad(arbol):
+    if not arbol.nodes:
+        return nx.DiGraph()
+        
+    nodo_raiz = list(arbol.nodes)[0]
+    
+    arbol_dirigido = nx.DiGraph()
+    
+    cola = [nodo_raiz]
+    visitados = {nodo_raiz}
+    
+    arbol_dirigido.add_node(nodo_raiz)
+    # otra busqueda en anchura para asignar direccionalidad
+    while cola:
+        nodo_actual = cola.pop(0)
+        for vecino in arbol.neighbors(nodo_actual):
+            if vecino not in visitados:
+                visitados.add(vecino)
+                cola.append(vecino)
+                arbol_dirigido.add_edge(nodo_actual, vecino)
+    return arbol_dirigido
 
 
-def obtener_grafo(pesos,variables):
-    return None
+pesos = obtener_pesos(variables, tablas)
+print(pesos)
+grafo = obtener_arbol(pesos,variables)
+# quiero plotear el arbol del paso 2
+pos = nx.spring_layout(grafo)
+nx.draw(grafo, pos, with_labels=True)
+labels = nx.get_edge_attributes(grafo, 'weight')
+nx.draw_networkx_edge_labels(grafo, pos, edge_labels=labels)
+plt.show()
+dir_arbol = asignar_direccionalidad(grafo)
+# quiero plotear el grafo de nuevo
+pos = nx.spring_layout(dir_arbol)
+nx.draw(dir_arbol, pos, with_labels=True)
+labels = nx.get_edge_attributes(dir_arbol, 'weight')
+nx.draw_networkx_edge_labels(dir_arbol, pos, edge_labels=labels)
+plt.show()
 
 
 

@@ -70,7 +70,7 @@ def obtener_pesos(variables, tablas):
 
     return pesos
 
-# Paso 2: Obtener el árbol de recubrimiento máximo usando networkx, voy añadiendo las aristas de mayor peso que no forman un ciclo
+# Paso 2: Obtener el árbol de recubrimiento máximo usando networkx con DFS
 def obtener_arbol(pesos_ordenados,variables):
     G = nx.Graph()
     # Pongo los nodos en el grafo
@@ -107,7 +107,7 @@ def forma_ciclo(nodo1, nodo2, grafo):
     return encontrado
 
 
-
+# Paso 2 alternativa: Obtener el árbol de recubrimiento máximo usando conjuntos disjuntos
 def obtener_arbol_conjuntos(pesos_ordenados,variables):
     G = nx.Graph()
     lista_conjuntos = []

@@ -1,9 +1,9 @@
 from chow_liu import *
 import random 
 
-def crear_variables(numVaribales,maxCardinalidad):
+def crear_variables(numVariables,maxCardinalidad):
     variables = []
-    for i in range(0, numVaribales):
+    for i in range(0, numVariables):
         nombre = chr(65 + i) 
         variables.append(Variable(nombre,random.randint(2,maxCardinalidad)))
 
@@ -44,28 +44,56 @@ if __name__ == "__main__":
     tablas = crear_tabla(variables)
 
     pesos = obtener_pesos(variables, tablas)
+    print("----------------------------------------------------------------------")
+    print("Pesos de las aristas entre nodos del grafo ordenados de mayor a menor:")
+    print("----------------------------------------------------------------------")
     print(pesos)
  
     grafo = obtener_arbol(pesos, variables)
     grafo2 = obtener_arbol_conjuntos(pesos, variables)
 
+    print("----------------------------------------------------------------------")
+    print("Mostrando grafos iniciales con pesos")
+    print("----------------------------------------------------------------------")
+
     plt.figure(figsize=(10, 5))  
     plt.subplot(1, 2, 1)
-    pos1 = nx.spring_layout(grafo)  
+    pos1 = nx.spring_layout(grafo, k=3)  
     nx.draw(grafo, pos1, with_labels=True, node_color="lightblue", node_size=1000)
+    labels = {(u, v): f"{w.get('weight', 0):.2f}" for u, v, w in grafo.edges(data=True)}
+    nx.draw_networkx_edge_labels(grafo, pos1, edge_labels=labels, font_size=6)
     plt.title("En profundidad")
 
     plt.subplot(1, 2, 2)
-    pos2 = nx.spring_layout(grafo2)
+    pos2 = nx.spring_layout(grafo2, k=3)
     nx.draw(grafo2, pos2, with_labels=True, node_color="lightgreen", node_size=1000)
+    labels2 = {(u, v): f"{w.get('weight', 0):.2f}" for u, v, w in grafo.edges(data=True)}
+    nx.draw_networkx_edge_labels(grafo2, pos2, edge_labels=labels2, font_size=6)
     plt.title("Conjuntos")
 
     plt.show()
-
+    
+    print("----------------------------------------------------------------------")
+    print("Mostrando grafos tras aplicar el algoritmo de Chow-Liu")
+    print("----------------------------------------------------------------------")
+    print("Arbol en profundidad:")
     dir_arbol = asignar_direccionalidad(grafo)
+    print("Arbol conjuntos:")
+    dir_arbol2 = asignar_direccionalidad(grafo2)
+    print("----------------------------------------------------------------------")
     # quiero plotear el grafo de nuevo
-    pos = nx.spring_layout(dir_arbol)
-    nx.draw(dir_arbol, pos, with_labels=True)
+    pos = nx.spring_layout(dir_arbol, k=3)
+    pos2 = nx.spring_layout(dir_arbol2, k=3)
+    plt.figure(figsize=(10, 5))
+    plt.subplot(1, 2, 1)
+    nx.draw(dir_arbol, pos, with_labels=True, node_color="lightblue", node_size=1000)
     labels = nx.get_edge_attributes(dir_arbol, 'weight')
     nx.draw_networkx_edge_labels(dir_arbol, pos, edge_labels=labels)
+    plt.title("Grafo resultante en profundidad")
+
+    plt.subplot(1, 2, 2)
+    nx.draw(dir_arbol2, pos2, with_labels=True, node_color="lightgreen", node_size=1000)
+    labels2 = nx.get_edge_attributes(dir_arbol2, 'weight')
+    nx.draw_networkx_edge_labels(dir_arbol2, pos2, edge_labels=labels2)
+    plt.title("Grafo resultante conjuntos")
     plt.show()

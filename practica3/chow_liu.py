@@ -147,8 +147,9 @@ def obtener_arbol_conjuntos(pesos_ordenados,variables):
 def asignar_direccionalidad(arbol):
     if not arbol.nodes:
         return nx.DiGraph()
-        
+    
     nodo_raiz = list(arbol.nodes)[0]
+    print(str(list(arbol.nodes)) + " Nodo escogido para asignar la direccionalidad: " + str(nodo_raiz))
     
     arbol_dirigido = nx.DiGraph()
     

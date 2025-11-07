@@ -1,4 +1,4 @@
-from paso1 import *
+from chow_liu import *
 import random 
 
 def crear_variables(numVaribales,maxCardinalidad):

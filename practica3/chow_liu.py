@@ -25,7 +25,6 @@ G4.add_nodes_from(nodes)
 G4.add_edges_from(edges)
 
 
-
 def asignar_direccionalidad(arbol):
     nodo_elegido = list(arbol.nodes)[0]
 
@@ -49,7 +48,5 @@ def asignar_direccionalidad(arbol):
     return nuevo_arbol
 ## La complejidad de asignar_direccionalidad es de O(n*e), donde n es el numero de nodos
 ## y e el numero de aristas
-
-
 
 print(list(asignar_direccionalidad(G4).edges))

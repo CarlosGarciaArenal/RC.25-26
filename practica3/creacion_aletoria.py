@@ -53,12 +53,12 @@ if __name__ == "__main__":
     plt.subplot(1, 2, 1)
     pos1 = nx.spring_layout(grafo)  
     nx.draw(grafo, pos1, with_labels=True, node_color="lightblue", node_size=1000)
-    plt.title("litos")
+    plt.title("En profundidad")
 
     plt.subplot(1, 2, 2)
     pos2 = nx.spring_layout(grafo2)
     nx.draw(grafo2, pos2, with_labels=True, node_color="lightgreen", node_size=1000)
-    plt.title("conjuntos")
+    plt.title("Conjuntos")
 
     plt.show()
 

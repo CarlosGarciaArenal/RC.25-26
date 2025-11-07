@@ -13,9 +13,7 @@ class Variable:
     def get_cardinalidad(self):
         return self.cardinalidad
 
-
 tablas = {}
-
 
 tablas[frozenset({('A',0)})] = 0.5
 tablas[frozenset({('A',1)})] = 0.5
@@ -114,7 +112,7 @@ def obtener_arbol_conjuntos(pesos_ordenados,variables):
     G = nx.Graph()
     lista_conjuntos = []
 
-    for (vars,peso) in pesos_ordenados:
+    for (vars,_) in pesos_ordenados:
         nodo1,nodo2 = vars
         indice_nodo1 = -1
         indice_nodo2 = -1
@@ -124,7 +122,6 @@ def obtener_arbol_conjuntos(pesos_ordenados,variables):
                 indice_nodo1 = i
             if nodo2 in lista_conjuntos[i]:
                 indice_nodo2 = i
-        
         if indice_nodo1 < 0 and indice_nodo2 < 0:
             lista_conjuntos.append({nodo1,nodo2})
             G.add_edge(nodo1,nodo2)
@@ -168,37 +165,3 @@ def asignar_direccionalidad(arbol):
                 cola.append(vecino)
                 arbol_dirigido.add_edge(nodo_actual, vecino)
     return arbol_dirigido
-
-if __name__ == "__main__":
-    pesos = obtener_pesos(variables, tablas)
-    print(pesos)
- 
-    grafo = obtener_arbol(pesos, variables)
-    grafo2 = obtener_arbol_conjuntos(pesos, variables)
-
-    plt.figure(figsize=(10, 5))  
-    plt.subplot(1, 2, 1)
-    pos1 = nx.spring_layout(grafo)  
-    nx.draw(grafo, pos1, with_labels=True, node_color="lightblue", node_size=1000)
-    plt.title("litos")
-
-    plt.subplot(1, 2, 2)
-    pos2 = nx.spring_layout(grafo2)
-    nx.draw(grafo2, pos2, with_labels=True, node_color="lightgreen", node_size=1000)
-    plt.title("conjuntos")
-
-    plt.show()
-
-    dir_arbol = asignar_direccionalidad(grafo)
-    # quiero plotear el grafo de nuevo
-    pos = nx.spring_layout(dir_arbol)
-    nx.draw(dir_arbol, pos, with_labels=True)
-    labels = nx.get_edge_attributes(dir_arbol, 'weight')
-    nx.draw_networkx_edge_labels(dir_arbol, pos, edge_labels=labels)
-    plt.show()
-
-
-
-
-
-

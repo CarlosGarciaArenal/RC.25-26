@@ -22,6 +22,7 @@ def generar_nombres(num):
 
 def crear_variables(numVariables,maxCardinalidad):
     nombres = generar_nombres(numVariables)
+    variables = []
     for nombre in nombres: 
         variables.append(Variable(nombre,random.randint(2,maxCardinalidad)))
         

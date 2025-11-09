@@ -1,12 +1,30 @@
 from chow_liu import *
 import random 
 
-def crear_variables(numVariables,maxCardinalidad):
-    variables = []
-    for i in range(0, numVariables):
-        nombre = chr(65 + i) 
-        variables.append(Variable(nombre,random.randint(2,maxCardinalidad)))
 
+def generar_nombres(num):
+    nombres = []
+    alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    while len(nombres) < num:
+        n = len(nombres)
+        nombre = ""
+
+        while True:
+            nombre = alfabeto[n % 26] + nombre
+            n = n // 26 - 1
+            if n < 0:
+                break
+
+        nombres.append(nombre)
+
+    return nombres
+
+def crear_variables(numVariables,maxCardinalidad):
+    nombres = generar_nombres(numVariables)
+    for nombre in nombres: 
+        variables.append(Variable(nombre,random.randint(2,maxCardinalidad)))
+        
     return variables
 
 

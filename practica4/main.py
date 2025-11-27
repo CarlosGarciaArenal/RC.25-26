@@ -15,7 +15,7 @@ if __name__ == "__main__":
     H = Proposition("H")
     I = Proposition("I")
 
-    BC = [Impl(A,And(B,E)),
+    BC = [Impl(And(A,D),E),
           Impl(And(B,E),A),
           Impl((And(And(A,B),C)), D),
           Impl((And(And(A,D),E)), G),
@@ -24,7 +24,7 @@ if __name__ == "__main__":
           A, D
           ]
     
-    stuff = chaining(BC)
+    stuff = chainingv2(BC)
     BC_original = set(BC)
     print("BC original:")
     for item in BC_original:

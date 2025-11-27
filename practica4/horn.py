@@ -29,6 +29,12 @@ class And(Formula):
     
     def to_string(self):
         return f"({self.p1.to_string()} and {self.p2.to_string()})"
+    
+    def get_p1(self):
+        return self.p1
+    
+    def get_p2(self):
+        return self.p2
 
 class Or(Formula):
 
@@ -90,3 +96,53 @@ def chaining(BC):
 
     return BCnew
 
+
+##La idea que le dije a Alex, tener un conjunto de proposiciones e ir mirando las implicaciones. La cosa es si son varios ands de proposiciones
+## que para eso esta la funcion auxiliar que te las devuelve en un set. Se podria usar tambien para si el tail son ands de proposiciones, pero no estoy seguro
+## si estaria bien eso porque no seria una clausula de Horn. 
+def chainingv2(BC):
+    proposiciones = set()
+    implicaciones = list()
+    BCnew = list(BC)
+    
+    for formula in BC:
+        if isinstance(formula,Proposition):
+            proposiciones.add(formula.to_string())
+        elif isinstance(formula,Impl):
+            implicaciones.append(formula)
+
+    hay_nueva_proposicion = True
+
+    while(hay_nueva_proposicion):
+        hay_nueva_proposicion = False
+        for i in range(0,len(implicaciones)):
+            if(not isinstance(implicaciones[i].tail(),Proposition)):
+                continue
+
+            necesarias = evaluar_proposiciones(implicaciones[i].head())
+
+            if(necesarias is not None and necesarias.issubset(proposiciones)):
+                proposiciones.add(implicaciones[i].tail().to_string())
+                BCnew.append(implicaciones[i].tail())
+                implicaciones.pop(i)
+                hay_nueva_proposicion = True
+                break
+
+    return BCnew
+                
+            
+
+def evaluar_proposiciones(formula):
+    if isinstance(formula,Proposition):
+        return {formula.to_string()}
+    if isinstance(formula,And):
+        proposiciones_p1 = evaluar_proposiciones(formula.get_p1())
+        proposiciones_p2 = evaluar_proposiciones(formula.get_p2())
+        if(proposiciones_p1 is not None and proposiciones_p2 is not None):
+            return proposiciones_p1.union(proposiciones_p2)
+        else:
+            return None
+    else:
+        return None
+
+                

@@ -126,8 +126,8 @@ def chainingv2(BC):
                 else:
                     for proposicion in nuevas:
                         BCnew.append(Proposition(proposicion))
-                        proposiciones.add(Proposition(proposicion))
-                        
+                        proposiciones.add(proposicion)
+
                 implicaciones.pop(i)
                 hay_nueva_proposicion = True
                 break

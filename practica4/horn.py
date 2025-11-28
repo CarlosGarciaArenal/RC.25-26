@@ -116,14 +116,18 @@ def chainingv2(BC):
     while(hay_nueva_proposicion):
         hay_nueva_proposicion = False
         for i in range(0,len(implicaciones)):
-            if(not isinstance(implicaciones[i].tail(),Proposition)):
-                continue
 
             necesarias = evaluar_proposiciones(implicaciones[i].head())
 
             if(necesarias is not None and necesarias.issubset(proposiciones)):
-                proposiciones.add(implicaciones[i].tail().to_string())
-                BCnew.append(implicaciones[i].tail())
+                nuevas = evaluar_proposiciones(implicaciones[i].tail())
+                if (nuevas is None):
+                    BCnew.append(implicaciones[i].tail())
+                else:
+                    for proposicion in nuevas:
+                        BCnew.append(Proposition(proposicion))
+                        proposiciones.add(Proposition(proposicion))
+                        
                 implicaciones.pop(i)
                 hay_nueva_proposicion = True
                 break

@@ -15,13 +15,13 @@ if __name__ == "__main__":
     H = Proposition("H")
     I = Proposition("I")
 
-    BC = [Impl(And(A,D),E),
-          Impl(And(B,E),A),
-          Impl((And(And(A,B),C)), D),
+    BC = [Impl(And(A,D),And(And(E,B), H)),
+          Impl(And(B,E),Or(A, F)),
+          Impl(Or(A, F), I),
           Impl((And(And(A,D),E)), G),
           Impl((And(And(B,D),F)), H),
           Impl((And(And(C, E),G)), I),
-          A, D
+          E, B
           ]
     
     stuff = chainingv2(BC)

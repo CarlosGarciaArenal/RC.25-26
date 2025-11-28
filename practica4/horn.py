@@ -116,21 +116,32 @@ def chainingv2(BC):
     while(hay_nueva_proposicion):
         hay_nueva_proposicion = False
         for i in range(0,len(implicaciones)):
-            if(not isinstance(implicaciones[i].tail(),Proposition)):
-                continue
-
             necesarias = evaluar_proposiciones(implicaciones[i].head())
 
             if(necesarias is not None and necesarias.issubset(proposiciones)):
                 proposiciones.add(implicaciones[i].tail().to_string())
-                BCnew.append(implicaciones[i].tail())
-                implicaciones.pop(i)
+                hola = set()
+                separar_and(implicaciones[i].tail(), hola)
+                for prop in hola:
+                    BCnew.append(prop)
+                    proposiciones.add(prop.to_string())
+                implicaciones.pop(i)                
                 hay_nueva_proposicion = True
                 break
-
     return BCnew
                 
-            
+
+def separar_and(formula, proposiciones):
+    if not isinstance(formula,And) and formula is not None:
+        print("Adding proposition:", formula.to_string())
+        proposiciones.add(formula)
+    else:
+        separar_and(formula.get_p1(), proposiciones)
+        separar_and(formula.get_p2(), proposiciones)
+        for prop in proposiciones:
+            prop.print()
+    
+
 
 def evaluar_proposiciones(formula):
     if isinstance(formula,Proposition):
@@ -143,6 +154,4 @@ def evaluar_proposiciones(formula):
         else:
             return None
     else:
-        return None
-
-                
+        return {formula.to_string()}

@@ -1,3 +1,5 @@
+from itertools import product
+
 class Formula:
 
     def __init__(self):
@@ -6,17 +8,26 @@ class Formula:
         pass
     def to_string(self):
         pass
+    def get_value(self):
+        pass
 
 class Proposition(Formula):
 
-    def __init__(self,p1):
+    def __init__(self,p1,value=None):
         self.p1 = p1
+        self.value = value
         
     def print(self):
         print(self.p1)
 
     def to_string(self):
         return self.p1
+    
+    def get_value(self):
+        return self.value
+    
+    def set_value(self, value):
+        self.value = value
     
 class And(Formula):
 
@@ -35,6 +46,9 @@ class And(Formula):
     
     def get_p2(self):
         return self.p2
+    
+    def get_value(self):
+        return (self.p1.get_value() and self.p2.get_value())
 
 class Or(Formula):
 
@@ -47,6 +61,9 @@ class Or(Formula):
     
     def to_string(self):
         return f"({self.p1.to_string()} or {self.p2.to_string()})"
+    
+    def get_value(self):
+        return (self.p1.get_value() or self.p2.get_value())
 
 class Not(Formula):
 
@@ -58,6 +75,9 @@ class Not(Formula):
     
     def to_string(self):
         return f"not {self.p1.to_string()}"
+    
+    def get_value(self):
+        return not self.p1.get_value()
 
 class Impl(Formula):
 
@@ -76,6 +96,9 @@ class Impl(Formula):
 
     def tail(self):
         return self.p2
+    
+    def get_value(self):
+        return ((not self.p1.get_value()) or self.p2.get_value())
 
 def modus_ponens(rule,fact):
     if isinstance(rule,Impl) and rule.head().to_string() == fact.to_string():
@@ -142,7 +165,6 @@ def separar_and(formula, proposiciones):
             prop.print()
     
 
-
 def evaluar_proposiciones(formula):
     if isinstance(formula,Proposition):
         return {formula.to_string()}
@@ -155,3 +177,41 @@ def evaluar_proposiciones(formula):
             return None
     else:
         return {formula.to_string()}
+    
+def separar(formula,proposiciones):
+    if formula is not None:
+        print("Adding proposition:", formula.to_string())
+        proposiciones.add(formula)
+    else:
+        if isinstance(formula,Impl):
+            separar(formula.head(), proposiciones)
+            separar(formula.tail(), proposiciones)
+        else:
+            separar(formula.get_p1(), proposiciones)
+            separar(formula.get_p2(), proposiciones)
+            for prop in proposiciones:
+                prop.print()
+    
+def es_completo(bc,variables):
+    bcnew = chainingv2(bc)
+    bcadded = list(set(bcnew) - set(bc))
+    for item in bcadded:
+        item.print()
+    rangos = [range(2) for var in variables]
+    for combinacion in product(*rangos): 
+        for formula in bc:
+            if isinstance(formula,Impl):
+                for i in range (0,len(variables)): 
+                    variables[i].set_value(combinacion[i])
+                if formula.get_value():
+                    for formula in bc:
+                        proposiciones = set()
+                        separar_and(formula.head(),proposiciones)
+                        if proposiciones in bc:
+                            if not formula.tail() in bcadded:
+                                return False
+    return True
+
+A = Proposition("A")
+B = Proposition("B")
+es_completo([A,Impl(A,B)],[A,B])

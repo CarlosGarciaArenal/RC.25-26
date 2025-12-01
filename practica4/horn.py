@@ -100,39 +100,18 @@ class Impl(Formula):
     def get_value(self):
         return ((not self.p1.get_value()) or self.p2.get_value())
 
-def modus_ponens(rule,fact):
-    if isinstance(rule,Impl) and rule.head().to_string() == fact.to_string():
-        return rule.tail()
 
-
-def chaining(BC):
-    to_explore_formula1 = list(BC)
-    BCnew = list(BC)
-
-    while to_explore_formula1:
-        formula1 = to_explore_formula1.pop()
-        for formula2 in BCnew:
-            item = modus_ponens(formula1,formula2)
-            if item and item not in BCnew:
-                BCnew.append(item)
-                to_explore_formula1.append(item)
-
-    return BCnew
-
-
-##La idea que le dije a Alex, tener un conjunto de proposiciones e ir mirando las implicaciones. La cosa es si son varios ands de proposiciones
-## que para eso esta la funcion auxiliar que te las devuelve en un set. Se podria usar tambien para si el tail son ands de proposiciones, pero no estoy seguro
-## si estaria bien eso porque no seria una clausula de Horn. 
+## Chaining V2 Algorithm de modus ponens, soporta separacion de AND en la cabeza
 def chainingv2(BC):
     proposiciones = set()
     implicaciones = list()
     BCnew = list(BC)
     
     for formula in BC:
-        if isinstance(formula,Proposition):
-            proposiciones.add(formula.to_string())
-        elif isinstance(formula,Impl):
+        if isinstance(formula,Impl):
             implicaciones.append(formula)
+        else:
+            proposiciones.add(formula.to_string())
 
     hay_nueva_proposicion = True
 
@@ -178,40 +157,72 @@ def evaluar_proposiciones(formula):
     else:
         return {formula.to_string()}
     
-def separar(formula,proposiciones):
-    if formula is not None:
-        print("Adding proposition:", formula.to_string())
-        proposiciones.add(formula)
-    else:
-        if isinstance(formula,Impl):
-            separar(formula.head(), proposiciones)
-            separar(formula.tail(), proposiciones)
-        else:
-            separar(formula.get_p1(), proposiciones)
-            separar(formula.get_p2(), proposiciones)
-            for prop in proposiciones:
-                prop.print()
+def es_completo(bc, variables):
+    """
+    Verifica si el algoritmo chainingv2 es completo para las variables dadas.
+    Completo significa: Todo lo que es lógicamente cierto (Entailment) es derivado por el algoritmo.
+    """
     
-def es_completo(bc,variables):
-    bcnew = chainingv2(bc)
-    bcadded = list(set(bcnew) - set(bc))
-    for item in bcadded:
-        item.print()
-    rangos = [range(2) for var in variables]
-    for combinacion in product(*rangos): 
+    derivados_objetos = chainingv2(bc)
+
+    proposiciones_derivadas = set()
+    for f in derivados_objetos:
+        if isinstance(f, Proposition):
+            proposiciones_derivadas.add(f.to_string())
+            
+    print(f"Tu algoritmo derivó: {proposiciones_derivadas}")
+
+    # Obtenemos lo que es cierto, por defecto decimos que todo es cierto
+    consecuencias_logicas = set(v.to_string() for v in variables)
+    
+    # Combinaciones de valores para las variables
+    rangos = [range(2) for _ in variables]
+    hay_modelos_validos = False
+    
+    for combinacion in product(*rangos):
+        # Asignamos los valores a las variables
+        for i, val in enumerate(combinacion):
+            variables[i].set_value(bool(val))
+            
+        # Verificamos si la BC es verdadera bajo esta asignación (flitramos filas de la tabla)
+        es_modelo_valido = True
         for formula in bc:
-            if isinstance(formula,Impl):
-                for i in range (0,len(variables)): 
-                    variables[i].set_value(combinacion[i])
-                if formula.get_value():
-                    for formula in bc:
-                        proposiciones = set()
-                        separar_and(formula.head(),proposiciones)
-                        if proposiciones in bc:
-                            if not formula.tail() in bcadded:
-                                return False
-    return True
+            if not formula.get_value():
+                es_modelo_valido = False
+                break
+        
+        # Si la BC es verdadera (es un modelo válido), miramos qué variables son verdaderas
+        if es_modelo_valido:
+            hay_modelos_validos = True
+            vars_verdaderas_en_modelo = set()
+            for v in variables:
+                if v.get_value():
+                    vars_verdaderas_en_modelo.add(v.to_string())
+            
+            # La intersección mantiene solo las variables que son TRUE en TODOS los modelos válidos encontrados hasta ahora
+            consecuencias_logicas = consecuencias_logicas.intersection(vars_verdaderas_en_modelo)
+
+    # aqui miramos si hay modelos validos, si no los hay la BC es mala, consideramos que es completo porque no deriva nada
+    if not hay_modelos_validos:
+        print("La base de conocimiento es contradictoria (siempre falsa).")
+        return True
+
+    print(f"La lógica dicta que es verdad: {consecuencias_logicas}")
+
+    # Comparamos lo que es logicamente cierto con lo que derivamos
+    faltantes = consecuencias_logicas - proposiciones_derivadas
+    
+    if len(faltantes) > 0:
+        print(f"INCOMPLETO. El algoritmo no pudo derivar: {faltantes}")
+        return False
+    else:
+        print("COMPLETO. El algoritmo derivó todas las consecuencias lógicas.")
+        return True
 
 A = Proposition("A")
 B = Proposition("B")
-es_completo([A,Impl(A,B)],[A,B])
+C = Proposition("C")
+es_completo([Impl(Or(A,B),C), A],[A,B,C])
+stuff = chainingv2([Impl(Or(A,B),C), A])
+for item in stuff:
+    item.print()

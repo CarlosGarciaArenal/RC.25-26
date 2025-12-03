@@ -122,9 +122,9 @@ def chaining(BC):
 
             if(necesarias is not None and necesarias.issubset(proposiciones)):
                 proposiciones.add(implicaciones[i].tail().to_string())
-                hola = set()
-                separar_and(implicaciones[i].tail(), hola)
-                for prop in hola:
+                formulas_tail = set()
+                separar_and(implicaciones[i].tail(), formulas_tail)
+                for prop in formulas_tail:
                     BCnew.append(prop)
                     proposiciones.add(prop.to_string())
                 implicaciones.pop(i)                

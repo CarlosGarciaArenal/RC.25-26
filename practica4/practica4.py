@@ -101,8 +101,8 @@ class Impl(Formula):
         return ((not self.p1.get_value()) or self.p2.get_value())
 
 
-## Chaining V2 Algorithm de modus ponens, soporta separacion de AND en la cabeza
-def chainingv2(BC):
+
+def chaining(BC):
     proposiciones = set()
     implicaciones = list()
     BCnew = list(BC)
@@ -145,32 +145,23 @@ def separar_and(formula, proposiciones):
     
 
 def evaluar_proposiciones(formula):
-    if isinstance(formula,Proposition):
-        return {formula.to_string()}
     if isinstance(formula,And):
         proposiciones_p1 = evaluar_proposiciones(formula.get_p1())
         proposiciones_p2 = evaluar_proposiciones(formula.get_p2())
-        if(proposiciones_p1 is not None and proposiciones_p2 is not None):
-            return proposiciones_p1.union(proposiciones_p2)
-        else:
-            return None
+        return proposiciones_p1.union(proposiciones_p2)
     else:
         return {formula.to_string()}
     
 def es_completo(bc, variables):
-    """
-    Verifica si el algoritmo chainingv2 es completo para las variables dadas.
-    Completo significa: Todo lo que es lógicamente cierto (Entailment) es derivado por el algoritmo.
-    """
-    
-    derivados_objetos = chainingv2(bc)
+
+    derivados_objetos = chaining(bc)
 
     proposiciones_derivadas = set()
     for f in derivados_objetos:
         if isinstance(f, Proposition):
             proposiciones_derivadas.add(f.to_string())
             
-    print(f"Tu algoritmo derivó: {proposiciones_derivadas}")
+    print(f"Es cierto segun el encadenamiento: {proposiciones_derivadas}")
 
     # Obtenemos lo que es cierto, por defecto decimos que todo es cierto
     consecuencias_logicas = set(v.to_string() for v in variables)
@@ -219,10 +210,9 @@ def es_completo(bc, variables):
         print("COMPLETO. El algoritmo derivó todas las consecuencias lógicas.")
         return True
 
-A = Proposition("A")
-B = Proposition("B")
-C = Proposition("C")
+A = Proposition("Llueve")
+B = Proposition("Nieva")
+C = Proposition("Mojado")
+
 es_completo([Impl(Or(A,B),C), A],[A,B,C])
-stuff = chainingv2([Impl(Or(A,B),C), A])
-for item in stuff:
-    item.print()
+

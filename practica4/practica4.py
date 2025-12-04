@@ -155,7 +155,6 @@ def evaluar_proposiciones(formula):
 def es_completo(bc, variables):
 
     derivados_objetos = chaining(bc)
-
     proposiciones_derivadas = set()
     for f in derivados_objetos:
         if isinstance(f, Proposition):
@@ -163,26 +162,22 @@ def es_completo(bc, variables):
             
     print(f"Es cierto segun el encadenamiento: {proposiciones_derivadas}")
 
-    # Obtenemos lo que es cierto, por defecto decimos que todo es cierto
+    # por defecto decimos que todo es cierto
     consecuencias_logicas = set(v.to_string() for v in variables)
     
-    # Combinaciones de valores para las variables
     rangos = [range(2) for _ in variables]
     hay_modelos_validos = False
-    
     for combinacion in product(*rangos):
-        # Asignamos los valores a las variables
+
         for i, val in enumerate(combinacion):
             variables[i].set_value(bool(val))
-            
-        # Verificamos si la BC es verdadera bajo esta asignación (flitramos filas de la tabla)
+        # filtramos filas de la tabla que no sirven
         es_modelo_valido = True
         for formula in bc:
             if not formula.get_value():
                 es_modelo_valido = False
                 break
-        
-        # Si la BC es verdadera (es un modelo válido), miramos qué variables son verdaderas
+        # miramos qué variables son verdaderas
         if es_modelo_valido:
             hay_modelos_validos = True
             vars_verdaderas_en_modelo = set()
@@ -190,19 +185,16 @@ def es_completo(bc, variables):
                 if v.get_value():
                     vars_verdaderas_en_modelo.add(v.to_string())
             
-            # La intersección mantiene solo las variables que son TRUE en TODOS los modelos válidos encontrados hasta ahora
             consecuencias_logicas = consecuencias_logicas.intersection(vars_verdaderas_en_modelo)
 
-    # aqui miramos si hay modelos validos, si no los hay la BC es mala, consideramos que es completo porque no deriva nada
+    # si no hay modelos válidos la BC es mala, consideramos que es completo porque no deriva nada
     if not hay_modelos_validos:
         print("La base de conocimiento es contradictoria (siempre falsa).")
         return True
 
     print(f"La lógica dicta que es verdad: {consecuencias_logicas}")
 
-    # Comparamos lo que es logicamente cierto con lo que derivamos
     faltantes = consecuencias_logicas - proposiciones_derivadas
-    
     if len(faltantes) > 0:
         print(f"INCOMPLETO. El algoritmo no pudo derivar: {faltantes}")
         return False

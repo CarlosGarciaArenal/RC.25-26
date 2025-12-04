@@ -1,4 +1,4 @@
-from horn import *
+from practica4 import *
 
 if __name__ == "__main__":
 
@@ -15,21 +15,21 @@ if __name__ == "__main__":
     H = Proposition("H")
     I = Proposition("I")
 
-    BC = [Impl(And(A,D),And(And(E,B), H)),
-          Impl(And(B,E),Or(A, F)),
-          Impl(Or(A, F), I),
-          Impl((And(And(A,D),E)), G),
-          Impl((And(And(B,D),F)), H),
-          Impl((And(And(C, E),G)), I),
-          E, B
+    BC = [Impl(And(A,C),E),
+          Impl(B,C),
+          Impl(And(D,B),F),
+          Impl(C,D),
+          B
           ]
     
-    stuff = chainingv2(BC)
+    stuff = chaining(BC)
     BC_original = set(BC)
-    print("BC original:")
+    print("-----------------------------")
+    print("El otro ejemplo: BC original:")
     for item in BC_original:
         item.print()
     BC_resultado = set(stuff) - BC_original
     print("Added:")
     for item in BC_resultado:
         item.print()
+    es_completo(BC,[A,B,C,D,E,F])
